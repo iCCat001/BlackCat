@@ -64,6 +64,7 @@ namespace BlackCat
             //PersonMessageSL = MainPersonMessageSLBuilder(1, 0);
             PersonMessageSL = new PersonMessageBoard(1, 1);
             //ActionListSL = MainActionListSLBuilder(1, 0);
+            //ActionListSL.Spacing = 0;
             ActionListSL = new ActionList(-1, -1);
 
 
@@ -488,8 +489,9 @@ namespace BlackCat
             TagsDisplaySL.Children.Add(TagsTitleLB);
 
             int i = 0;
-            while (BlackCat.App.DisplayActivity.Tags[i] != null)
+            while (i <= 2 && BlackCat.App.DisplayActivity.Tags[i] != null)
             {
+                
                 TagsLB[i] = new Label();
                 TagsLB[i].Text = BlackCat.App.DisplayActivity.Tags[i];
                 TagsLB[i].FontSize = Device.GetNamedSize(NamedSize.Micro, typeof(Label));
@@ -918,7 +920,7 @@ namespace BlackCat
             MessageSLUnits = new StackLayout[MessageNumberLimit];
             SettingTheme = BlackCat.App.SettingTheme;
             //this.BackgroundColor = SettingTheme.ColorLightGrayClear;
-            this.Spacing = 5;
+            this.Spacing = 2;
         }
         public MessageList(int ID, int Key = 0) : this()
         {
@@ -989,7 +991,7 @@ namespace BlackCat
         {
             StackLayout ReturnObject = new StackLayout();
 
-            ReturnObject.Padding = new Thickness(8, 10, 8, 15);
+            ReturnObject.Padding = new Thickness(8, 8, 8, 8);
             ReturnObject.Orientation = StackOrientation.Horizontal;
             ReturnObject.BackgroundColor = Color.White;
             //ReturnObject.Spacing = 10;
@@ -1552,31 +1554,40 @@ namespace BlackCat
 
                         New.Title = AddActivityPage.TitleET.Text;
                         New.Describe = AddActivityPage.MessageED.Text;
-                        New.PeopleNumberLimit = int.Parse(AddActivityPage.NumberPE.SelectedItem.ToString());
+                        New.PeopleNumberLimit = int.Parse(AddActivityPage.PeopleNumberPE.SelectedItem.ToString());
                         New.TagsCount = 0;
-                        if (!String.IsNullOrEmpty(AddActivityPage.Tag1PE.SelectedItem.ToString()))
-                        {
-                            New.Tags[1] = AddActivityPage.Tag1PE.SelectedItem.ToString();
-                            New.TagsCount++;
-                        }
-                        if (!String.IsNullOrEmpty(AddActivityPage.Tag2PE.SelectedItem.ToString()))
-                        {
-                            New.Tags[2] = AddActivityPage.Tag1PE.SelectedItem.ToString();
-                            New.TagsCount++;
-                        }
-                        if (!String.IsNullOrEmpty(AddActivityPage.Tag3PE.SelectedItem.ToString()))
-                        {
-                            New.Tags[3] = AddActivityPage.Tag1PE.SelectedItem.ToString();
-                            New.TagsCount++;
-                        }
+                        if (AddActivityPage.Tag1PE.SelectedItem != null)
+                            if (!String.IsNullOrEmpty(AddActivityPage.Tag1PE.SelectedItem.ToString()))
+                                {
+                                    New.Tags[0] = AddActivityPage.Tag1PE.SelectedItem.ToString();
+                                    New.TagsCount++;
+                                }
+                        if(AddActivityPage.Tag2PE.SelectedItem != null)
+                            if (!String.IsNullOrEmpty(AddActivityPage.Tag2PE.SelectedItem.ToString()))
+                             {
+                                    New.Tags[1] = AddActivityPage.Tag2PE.SelectedItem.ToString();
+                                    New.TagsCount++;
+                             }
+                        if (AddActivityPage.Tag3PE.SelectedItem != null)
+                            if (!String.IsNullOrEmpty(AddActivityPage.Tag3PE.SelectedItem.ToString()))
+                                {
+                                    New.Tags[2] = AddActivityPage.Tag3PE.SelectedItem.ToString();
+                                    New.TagsCount++;
+                                }
 
                         New.PlanDate = AddActivityPage.ChooseDate;
                         New.StartPlace = AddActivityPage.PlaceET.Text;
 
                         New.PeopleNumber = 0;
                         New.Creater = BlackCat.App.LoginPerson;
-                        
-                        
+
+                        New.CreatDate = DateTime.Now;
+                        New.ID = New.IDRequest();
+
+
+                        BlackCat.App.PageInfo.PopAsync(true);
+                        ActionList.SelectLabel = ActionList.TitleControl[0];
+                        ActionList.PageChange();
                     }
                     //新建活动
                     break;
@@ -1623,6 +1634,19 @@ namespace BlackCat
         {
             MainBaseSV = new ScrollView();
             MainAreaSL = new StackLayout();
+
+            TitleET = new Entry();
+            PlaceET = new Entry();
+            MessageED = new Editor();
+
+            DP = new DatePicker();
+            TP = new TimePicker();
+            PeopleNumberPE = new Picker();
+
+            NumberPE = new Picker();
+            Tag1PE = new Picker();
+            Tag2PE = new Picker();
+            Tag3PE = new Picker();
 
             SettingTheme = BlackCat.App.SettingTheme;
 
@@ -1820,7 +1844,13 @@ namespace BlackCat
         }
         public static int Check()
         {
-            return 1;
+            if(!String.IsNullOrWhiteSpace( TitleET .Text))
+                if(MessageED.Text != "")
+                    if(!String.IsNullOrWhiteSpace(PlaceET.Text))
+                        if(PeopleNumberPE.SelectedItem != null)
+                            if(Tag1PE.SelectedItem !=null)
+                                return 1;
+            return 0;
         }
         private StackLayout TitleSLbuilder(string Title, string Describe)
         {
@@ -3175,6 +3205,7 @@ namespace BlackCat
         {
             Availabe = false;
             HasMessage = false;
+            TagsCount = 0;
         }
         public ActivityMessage(string Title, string Describe, string Place,
             string StartPlace, int PeopleNumberLimit, PersonMessage Creater,
@@ -3234,7 +3265,7 @@ namespace BlackCat
             this.Describe = SourceData.Describe;
             this.Place = SourceData.Place;
             this.StartPlace = SourceData.StartPlace;
-            this.PeopleNumber = SourceData.PeopleNumberLimit;
+            this.PeopleNumber = SourceData.PeopleNumber;
             this.PeopleNumberLimit = SourceData.PeopleNumberLimit;
             
             if (SourceData.Tag1 != "")
@@ -3292,7 +3323,7 @@ namespace BlackCat
             FollowMessageIDCount++;
             return 1;
         }
-        private long IDRequest(int Key = 0)
+        public long IDRequest(int Key = 0)
         {
             long TID = -1;
 
@@ -3513,6 +3544,7 @@ namespace BlackCat
         public string Tag3 { get; set; }
         public int Availabe{ get; set; }
         public int HasMessage{ get; set; }
+        public int PeopleNumber { get; set; }
 
         public int CreaterID{ get; set; }
 
