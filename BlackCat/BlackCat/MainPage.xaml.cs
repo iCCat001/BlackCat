@@ -100,6 +100,7 @@ namespace BlackCat
 
             MainBaseSL.Children.Add(MainPageBaseSV);
             NavigationPage.SetHasNavigationBar(this, false);
+            SelectIndex = 1;
 
             ActionListSL.ChildAdded += ActionListSL_ChildAdded;
             ActionListSL.LayoutChanged += ActionListSL_ChildAdded;
@@ -1337,7 +1338,7 @@ namespace BlackCat
                     AddActivityPageButtonBuilder();
                     break;
                 case 0:
-                    LoginPageButtonBuilder();
+                    LoginPageButtonBuilder(StateKey);
                     break;
             }
         }
@@ -1456,10 +1457,13 @@ namespace BlackCat
 
             this.Children.Add(PicAdd);
         }
-        private void LoginPageButtonBuilder()
+        private void LoginPageButtonBuilder(int Key=0)
         {
             var tgr = new TapGestureRecognizer();
-            tgr.Command = new Command(() => { ButtonCommandPageChange(0); });
+            if(Key == 1)
+                tgr.Command = new Command(() => { ButtonCommandPageChange(0,1); });
+            else
+                tgr.Command = new Command(() => { ButtonCommandPageChange(0); });
 
             this.GestureRecognizers.Add(tgr);
 
@@ -1479,31 +1483,53 @@ namespace BlackCat
 
             this.Children.Add(PicAdd);
         }
-        private void ButtonCommandPageChange(int Key = 0)
+        private void ButtonCommandPageChange(int Key = 0,int PlusKey =0)
         {
             switch (Key)
             {
                 case 0:
-                    if (SetupPage.SetupPages[SetupPage.IndexNow + 1] != null)
+                    
+                        if (SetupPage.SetupPages[SetupPage.IndexNow + 1] != null)
                     {
-                        //跳下一页
-                        if (SetupPage.Check(SetupPage.IndexNow) != 0)
-                        {
-                            SetupPage.MainBaseSL.Children.Clear();
-                            SetupPage.MainBaseSL.Children.Add(SetupPage.ControlBaseSLBulider(0));
-                            SetupPage.PageTitle.Text = "注册步骤：" + (SetupPage.IndexNow +2 ) + "/3";
-                            SetupPage.MainBaseSL.Children.Add(SetupPage.SetupPages[SetupPage.IndexNow + 1]);
-                            int a = (SetupPage.IndexNow++);
-                            if (SetupPage.SetupPages[SetupPage.IndexNow + 1] == null && SetupPage.IndexNow < 3)
+                        
+                            //跳下一页
+                            if (SetupPage.Check(SetupPage.IndexNow) != 0)
                             {
-                                this.PicAdd.Source = FileImageSource.FromFile("Icons/ButtonSure200.gif");
+                                SetupPage.MainBaseSL.Children.Clear();
+                                SetupPage.MainBaseSL.Children.Add(SetupPage.ControlBaseSLBulider(0));
+                                SetupPage.PageTitle.Text = "注册步骤：" + (SetupPage.IndexNow + 2) + "/3";
+                                SetupPage.MainBaseSL.Children.Add(SetupPage.SetupPages[SetupPage.IndexNow + 1]);
+                                int a = (SetupPage.IndexNow++);
+                                if (SetupPage.SetupPages[SetupPage.IndexNow + 1] == null && SetupPage.IndexNow < 3)
+                                {
+                                    this.PicAdd.Source = FileImageSource.FromFile("Icons/ButtonSure200.gif");
+                                }
                             }
-                        }
+                        
                     }
-                    else
+                        else
                     {
                         if (SetupPage.Check(SetupPage.IndexNow) != 0)
                         {
+                            if(PlusKey !=0)
+                            {
+                                if (SetupPage.Check(5) != 0)
+                                {
+                                    BlackCat.App.LoginPerson.Name = SetupPage.NameET.Text;
+                                    BlackCat.App.LoginPerson.Describe = SetupPage.DescribeET.Text;
+                                    BlackCat.App.LoginPerson.Password = SetupPage.PasswordET.Text;
+                                    BlackCat.App.LoginPerson.Update();
+                                    BlackCat.App.PageInfo.PopAsync(true);
+
+                                    BlackCat.App.DisplayPerson = BlackCat.App.LoginPerson;
+                                    BlackCat.App.PageInfo = new NavigationPage(new MainPage());
+                                    BlackCat.App.Current.MainPage = BlackCat.App.PageInfo;
+                                    break;
+                                }
+                                else
+                                    break;
+                                
+                            }
                             PersonMessage New = new PersonMessage();
                             New.MarkOrganize = SetupPage.MarkReanglePE.SelectedItem.ToString();
                             New.Setup(SetupPage.NameET.Text, SetupPage.DescribeET.Text, SetupPage.PhoneNumberET.Text);
@@ -1532,7 +1558,7 @@ namespace BlackCat
                         }
                         //保存
                     }
-                    
+
                     break;
                 case 1:
                     BlackCat.App.PageInfo.PushAsync(new AddActivityPage());
@@ -1542,7 +1568,7 @@ namespace BlackCat
                     ActionList.PageChange();
                     break;
                 case 3:
-
+                    BlackCat.App.PageInfo.PushAsync(new SetupPage(BlackCat.App.LoginPerson), true);
                     break;
                 case 4:
                     BlackCat.App.DataCatcherE.FollowListTableC.Alter(BlackCat.App.LoginPerson, BlackCat.App.DisplayActivity);
@@ -2270,8 +2296,10 @@ namespace BlackCat
 
         Label PhoneNumberMessageLB = new Label();
         Label PasswordMessageLB = new Label();
+        public static string OldPassword = "";
 
         public static Entry PhoneNumberET = new Entry();
+        public static Entry OldPasswordET = new Entry();
         public static Entry PasswordET = new Entry();
         public static Entry ReCheckPasswordET = new Entry();
         public static Entry NameET = new Entry();
@@ -2309,11 +2337,18 @@ namespace BlackCat
         }
         public SetupPage(PersonMessage Input, int Key = 0) : this()
         {
+            MainBaseSL.Children.Clear();
+            SuperBottonBV.Children.Clear();
+            SuperBottonBV.Children.Add(new SuperBotton(0, 1));
             for (int i = 0; i < 5; i++)
             {
                 SetupPages[i] = null;
             }
-            SetupPages[0] = EditPage();
+            SetupPages[0] = EditPage(Input);
+
+            PageTitle.Text = "修改资料";
+            MainBaseSL.Children.Add(SetupPages[0]);
+            Content = MainBaseAL;
         }
         private StackLayout StandardPage()
         {
@@ -2451,12 +2486,51 @@ namespace BlackCat
             ReturnObject.Children.Add(lab4);
             return ReturnObject;
         }
-        private StackLayout EditPage()
+        private StackLayout EditPage(PersonMessage New)
         {
-            StackLayout ReturnObject = null;
+            OldPassword = New.Password;
+            StackLayout ReturnObject = new StackLayout();
+
+            StackLayout NameSL = new StackLayout();
+
+            StackLayout NameTitleSL = TitleSLbuilder("昵称", "修改你的昵称");
+
+            NameET = EntryBuilder("昵称");
+            NameET.Text = New.Name;
+
+            NameSL.Children.Add(NameTitleSL);
+            NameSL.Children.Add(NameET);
+
+            ReturnObject.Children.Add(NameSL);
+
+            StackLayout DescribeSL = new StackLayout();
+
+            StackLayout DescribeTitleSL = TitleSLbuilder("个性签名", "修改你的个性签名");
+
+            DescribeET = EntryBuilder("个性签名");
+            DescribeET.Text = New.Describe;
+
+            DescribeSL.Children.Add(DescribeTitleSL);
+            DescribeSL.Children.Add(DescribeET);
+
+            ReturnObject.Children.Add(DescribeSL);
+
+            StackLayout PasswordSL = new StackLayout();
+
+            StackLayout PasswordTitleSL = TitleSLbuilder("密码", "请牢记你的新密码！");
 
 
+            OldPasswordET = EntryBuilder("旧密码", true);
+            PasswordET = EntryBuilder("新密码", true);
+            ReCheckPasswordET = EntryBuilder("重复一次", true);
 
+
+            PasswordSL.Children.Add(PasswordTitleSL);
+            PasswordSL.Children.Add(OldPasswordET);
+            PasswordSL.Children.Add(PasswordET);
+            PasswordSL.Children.Add(ReCheckPasswordET);
+
+            ReturnObject.Children.Add(PasswordSL);
             return ReturnObject;
         }
         public static StackLayout ControlBaseSLBulider(int index)
@@ -2561,7 +2635,13 @@ namespace BlackCat
                 case 2:
                     return 1;
                 default:
-                    break;
+                    if(OldPasswordET.Text == OldPassword && PasswordET.Text == ReCheckPasswordET.Text && 
+                        !String.IsNullOrEmpty(PasswordET.Text) && !String.IsNullOrEmpty(NameET.Text) && 
+                        !String.IsNullOrEmpty(DescribeET.Text))
+                    {
+                        return 1;
+                    }
+                    return 0;
             }
             return 0;
         }
@@ -2798,7 +2878,7 @@ namespace BlackCat
             SQLConnection.Delete<SQLPersonUnit>(id);
             return 1;
         }
-        public new int Alter(PersonMessage New)
+        public new int Alter(PersonMessage New,int Key =0)
         {
             var NewThing = new SQLPersonUnit
             {
@@ -2818,7 +2898,15 @@ namespace BlackCat
                 Describe = New.Describe,
             };
 
-            SQLConnection.Insert(NewThing);
+            if (Key == 0)
+                SQLConnection.Insert(NewThing);
+            else
+            {
+                NewThing.ID = New.ID;
+                SQLConnection.Update(NewThing);
+                BlackCat.App.TempSee();
+            }
+                
             return 1;
         }
         
@@ -3164,9 +3252,7 @@ namespace BlackCat
         {
             int R = 0;
 
-            /*
-             * 占位：更新服务器数据，更新成功返回1，否则为其他值
-             */
+            BlackCat.App.DataCatcherE.PersonTableC.Alter(this,1);
 
             return R;
         }
