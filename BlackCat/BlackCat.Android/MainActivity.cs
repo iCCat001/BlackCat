@@ -1,14 +1,20 @@
 ﻿using System;
-
+using System.IO;
 using Android.App;
 using Android.Content.PM;
 using Android.Runtime;
 using Android.Views;
 using Android.Widget;
 using Android.OS;
+using BlackCat.Droid;
+using Xamarin.Forms;
+using Xamarin.Forms.Xaml;
+
+[assembly: Dependency(typeof(SQLite_Android))]
 
 namespace BlackCat.Droid
 {
+    [XamlCompilation(XamlCompilationOptions.Compile)]
     [Activity(Label = "BlackCat", Icon = "@drawable/icon", Theme = "@style/MainTheme", MainLauncher = true, ConfigurationChanges = ConfigChanges.ScreenSize | ConfigChanges.Orientation)]
     public class MainActivity : global::Xamarin.Forms.Platform.Android.FormsAppCompatActivity
     {
@@ -35,7 +41,7 @@ namespace BlackCat.Droid
         public SQLite.Net.SQLiteConnection GetConnection()
         {
             var fileName = "RandomThought.db3";
-            var documentsPath = Environment.GetFolderPath(Environment.SpecialFolder.Personal);
+            var documentsPath = System.Environment.GetFolderPath(System.Environment.SpecialFolder.Personal);
             var path = Path.Combine(documentsPath, fileName);
 
             var platform = new SQLite.Net.Platform.XamarinAndroid.SQLitePlatformAndroid();

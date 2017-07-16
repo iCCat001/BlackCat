@@ -6,6 +6,10 @@ using SQLite.Net.Platform.XamarinIOS;
 using Foundation;
 using UIKit;
 using System.IO;
+using Xamarin.Forms;
+using BlackCat.iOS;
+
+[assembly: Dependency(typeof(SQLite_iOS))]
 
 namespace BlackCat.iOS
 {

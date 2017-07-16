@@ -119,7 +119,7 @@
     <Content Include="Icons\Back256.gif">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="BackG-B.png">
+    <Content Include="BackGB.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Icons\Back40.gif">

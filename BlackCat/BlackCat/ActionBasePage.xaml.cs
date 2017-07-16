@@ -10,6 +10,7 @@ using Xamarin.Forms.Xaml;
 namespace BlackCat
 {
     [XamlCompilation(XamlCompilationOptions.Compile)]
+
     public partial class ActionBasePage : ContentPage
     {
         public AbsoluteLayout MainBaseAL;

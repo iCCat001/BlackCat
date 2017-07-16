@@ -36,6 +36,9 @@
     <AndroidUseSharedRuntime>True</AndroidUseSharedRuntime>
     <AndroidLinkMode>None</AndroidLinkMode>
     <AndroidSupportedAbis>armeabi,armeabi-v7a,x86</AndroidSupportedAbis>
+    <AotAssemblies>false</AotAssemblies>
+    <EnableLLVM>false</EnableLLVM>
+    <BundleAssemblies>false</BundleAssemblies>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -46,6 +49,9 @@
     <WarningLevel>4</WarningLevel>
     <AndroidUseSharedRuntime>False</AndroidUseSharedRuntime>
     <AndroidLinkMode>SdkOnly</AndroidLinkMode>
+    <AotAssemblies>false</AotAssemblies>
+    <EnableLLVM>false</EnableLLVM>
+    <BundleAssemblies>false</BundleAssemblies>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="FormsViewGroup, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
@@ -58,9 +64,6 @@
     </Reference>
     <Reference Include="SQLite.Net.Platform.XamarinAndroid, Version=3.1.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\packages\SQLite.Net-PCL.3.1.1\lib\MonoAndroid\SQLite.Net.Platform.XamarinAndroid.dll</HintPath>
-    </Reference>
-    <Reference Include="SQLite.Net.Standard, Version=3.1.1.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\SQLite.Net.Standard.1.0.0\lib\netstandard1.4\SQLite.Net.Standard.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -105,6 +108,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="MainActivity.cs" />
     <Compile Include="Resources\Resource.Designer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -135,111 +139,50 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Icons\Add256.gif">
+    <AndroidResource Include="Resources\drawable\backgb.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Icons\Back256.gif">
+    </AndroidResource>
+    <AndroidResource Include="Resources\drawable\icons\add256.gif" />
+    <AndroidResource Include="Resources\drawable\icons\back256.gif" />
+    <AndroidResource Include="Resources\drawable\icons\back40.gif" />
+    <AndroidResource Include="Resources\drawable\icons\buttonadd200.gif" />
+    <AndroidResource Include="Resources\drawable\icons\buttonclear200.gif" />
+    <AndroidResource Include="Resources\drawable\icons\buttonfollow200.gif" />
+    <AndroidResource Include="Resources\drawable\icons\buttonnext200.gif" />
+    <AndroidResource Include="Resources\drawable\icons\buttonrefrash200.gif" />
+    <AndroidResource Include="Resources\drawable\icons\buttonsetting200.gif" />
+    <AndroidResource Include="Resources\drawable\icons\buttonsure200.gif" />
+    <AndroidResource Include="Resources\drawable\icons\complain256.gif" />
+    <AndroidResource Include="Resources\drawable\icons\complainB256.gif" />
+    <AndroidResource Include="Resources\drawable\icons\complement256.gif" />
+    <AndroidResource Include="Resources\drawable\icons\complementb256.gif" />
+    <AndroidResource Include="Resources\drawable\icons\dafultheadimg.gif" />
+    <AndroidResource Include="Resources\drawable\icons\home256.gif" />
+    <AndroidResource Include="Resources\drawable\icons\Iconccat54.gif" />
+    <AndroidResource Include="Resources\drawable\icons\Iconccat853.gif" />
+    <AndroidResource Include="Resources\drawable\icons\logo.png" />
+    <AdditionalFiles Include="Resources\drawable\icons\logoa.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Icons\Back54.gif">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Icons\ButtonAdd200.gif">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Icons\ButtonClear200.gif">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Icons\ButtonFollow200.gif">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Icons\ButtonRefrash200.gif">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Icons\ButtonSetting200.gif">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Icons\ButtonSure200.gif">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Icons\Complain256.gif">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Icons\ComplainB256.gif">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Icons\Complement256.gif">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Icons\ComplementB256.gif">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Icons\Home256.gif">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Icons\Icon-CCat54.gif">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Icons\Icon-CCat853.gif">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Icons\More.gif">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Icons\More54.gif">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Icons\MoreB54.gif">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Icons\NewMessage160.gif">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Icons\People256.gif">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Icons\PeopleB256.gif">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Icons\Place256.gif">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Icons\PlaceB256.gif">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Icons\Refresh256.gif">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Icons\Setting256.gif">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Icons\SettingB256.gif">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Icons\Sreach256.gif">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Icons\SreachB256.gif">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Icons\Tags256.gif">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Icons\TagsB256.gif">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Icons\Time15.gif">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Icons\TimeA15.gif">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Icons\TimeB15.gif">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Icons\Top256.gif">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
+    </AdditionalFiles>
+    <AndroidResource Include="Resources\drawable\icons\more.gif" />
+    <AndroidResource Include="Resources\drawable\icons\more54.gif" />
+    <AndroidResource Include="Resources\drawable\icons\moreb54.gif" />
+    <AndroidResource Include="Resources\drawable\icons\newmessage160.gif" />
+    <AndroidResource Include="Resources\drawable\icons\people256.gif" />
+    <AndroidResource Include="Resources\drawable\icons\peopleb256.gif" />
+    <AndroidResource Include="Resources\drawable\icons\place256.gif" />
+    <AndroidResource Include="Resources\drawable\icons\placeB256.gif" />
+    <AndroidResource Include="Resources\drawable\icons\refresh256.gif" />
+    <AndroidResource Include="Resources\drawable\icons\setting256.gif" />
+    <AndroidResource Include="Resources\drawable\icons\settingb256.gif" />
+    <AndroidResource Include="Resources\drawable\icons\Sreach256.gif" />
+    <AndroidResource Include="Resources\drawable\icons\SreachB256.gif" />
+    <AndroidResource Include="Resources\drawable\icons\Tags256.gif" />
+    <AndroidResource Include="Resources\drawable\icons\TagsB256.gif" />
+    <AndroidResource Include="Resources\drawable\icons\Time15.gif" />
+    <AndroidResource Include="Resources\drawable\icons\TimeA15.gif" />
+    <AndroidResource Include="Resources\drawable\icons\TimeB15.gif" />
+    <AndroidResource Include="Resources\drawable\icons\Top256.gif" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
   <Import Project="..\..\packages\Xamarin.Android.Support.Vector.Drawable.23.3.0\build\Xamarin.Android.Support.Vector.Drawable.targets" Condition="Exists('..\..\packages\Xamarin.Android.Support.Vector.Drawable.23.3.0\build\Xamarin.Android.Support.Vector.Drawable.targets')" />

@@ -8,13 +8,16 @@ using Xamarin.Forms;
 using SQLite.Net;
 using SQLite.Net.Attributes;
 using SQLite.Net.Interop;
+using Xamarin.Forms.Xaml;
 
 namespace BlackCat
 {
     //1. UI以及表层控制类
     //1.1. 总入口类
+    [XamlCompilation(XamlCompilationOptions.Compile)]
     public partial class MainPage : ContentPage
     {
+        [assembly: XamlCompilation(XamlCompilationOptions.Compile)]
         StackLayout MainPageBaseSL;
         StackLayout ActionListSL;
         StackLayout PersonMessageSL;
@@ -283,10 +286,11 @@ namespace BlackCat
 
         Label FollowerLB;
 
+        public static int ActionIDR;
         /*
          * 占位：Icons
          */
-
+        public static List<PersonMessage> Followers = new List<PersonMessage>(); 
         PersonMessage Creater;
         Theme SettingTheme = new Theme();
         int GuestbookNumberLimit = 20;
@@ -318,6 +322,7 @@ namespace BlackCat
             BlackCat.App.DataCatcherE.SetCatchType(2);
             Creater = BlackCat.App.DisplayActivity.Creater;
 
+            ActionIDR = ActionID;
             TagsLB = new Label[BlackCat.App.DisplayActivity.TagsCount];
 
 
@@ -362,7 +367,7 @@ namespace BlackCat
             ReturnObject.Orientation = StackOrientation.Horizontal;
 
             Button BackButton = new Button();
-            BackButton.Image = (FileImageSource)ImageSource.FromFile("Icons/Back40.gif");
+            BackButton.Image = (FileImageSource)ImageSource.FromFile(BlackCat.App.UriChanger.Uri("Icons/Back40.gif"));
             BackButton.BorderWidth = 0;
             BackButton.BackgroundColor = Color.Transparent;
 
@@ -385,7 +390,7 @@ namespace BlackCat
 
 
             Button MoreButton = new Button();
-            MoreButton.Image = (FileImageSource)ImageSource.FromFile("Icons/More54.gif");
+            MoreButton.Image = (FileImageSource)ImageSource.FromFile(BlackCat.App.UriChanger.Uri("Icons/More54.gif"));
             MoreButton.BackgroundColor = Color.Transparent;
             MoreButton.BorderWidth = 0;
 
@@ -407,7 +412,8 @@ namespace BlackCat
             ReturnObject.Children.Add(FollowerBoardSLBuilder());
 
             int i = 0;
-            StackLayout[] Temp;
+            StackLayout[] Temp = new StackLayout[10];
+            i = 0;
             Temp = GuestbookBoardBuilder();
             while (Temp[i] != null)
             {
@@ -536,8 +542,9 @@ namespace BlackCat
 
             ReturnObject.Orientation = StackOrientation.Horizontal;
 
-            Image CreaterHead = new Image();
-            CreaterHead.Source = FileImageSource.FromFile("Icons/Icon-CCat54.gif");
+            Image CreaterHead = BlackCat.App.DisplayActivity.Creater.HeadImage;
+            //CreaterHead.Source = FileImageSource.FromFile("Icons/Icon-CCat54.gif");
+            CreaterHead.WidthRequest = 54;
             ReturnObject.Children.Add(CreaterHead);
 
             /*
@@ -549,12 +556,14 @@ namespace BlackCat
             NameDisplaySL.HorizontalOptions = LayoutOptions.StartAndExpand;
             NameDisplaySL.Spacing = 0;
 
-            CreaterNameLB.Text = " " + BlackCat.App.DisplayActivity.Creater.Name;
-            CreaterNameLB.FontSize = Device.GetNamedSize(NamedSize.Medium, typeof(Label));
-            CreaterNameLB.TextColor = SettingTheme.GetMainThemeColor();
-            CreaterNameLB.VerticalOptions = LayoutOptions.Center;
-            NameDisplaySL.Children.Add(CreaterNameLB);
+            Label CreaterNameLBC = new Label();
+            CreaterNameLBC.Text = " " + BlackCat.App.DisplayActivity.Creater.Name;
+            CreaterNameLBC.FontSize = Device.GetNamedSize(NamedSize.Medium, typeof(Label));
+            CreaterNameLBC.TextColor = SettingTheme.GetMainThemeColor();
+            CreaterNameLBC.VerticalOptions = LayoutOptions.Center;
+            NameDisplaySL.Children.Add(CreaterNameLBC);
 
+            Label CreaterRealNameLB = new Label();
             CreaterRealNameLB.Text = " " + BlackCat.App.DisplayActivity.Creater.RealName;
             CreaterRealNameLB.FontSize = Device.GetNamedSize(NamedSize.Micro, typeof(Label));
             CreaterRealNameLB.TextColor = SettingTheme.GetMainThemeColor();
@@ -563,6 +572,7 @@ namespace BlackCat
 
             ReturnObject.Children.Add(NameDisplaySL);
 
+            Label CreaterMarkLB = new Label();
             CreaterMarkLB.Text = BlackCat.App.DisplayActivity.Creater.Mark.ToString();
             CreaterMarkLB.FontSize = Device.GetNamedSize(NamedSize.Large, typeof(Label));
             CreaterMarkLB.TextColor = SettingTheme.GetMainThemeColor();
@@ -588,7 +598,10 @@ namespace BlackCat
         private StackLayout FollowerBoardSLBuilder()
         {
             StackLayout ReturnObject = new StackLayout();
-            ReturnObject.Orientation = StackOrientation.Horizontal;
+            //ReturnObject.Orientation = StackOrientation.Horizontal;
+
+            ReturnObject.Spacing = 10;
+            Followers = new List<PersonMessage>();
 
             ReturnObject.Children.Add(new Label()
             {
@@ -596,10 +609,66 @@ namespace BlackCat
                 FontSize = Device.GetNamedSize(NamedSize.Small, typeof(Label))
             });
 
+            BlackCat.App.DataCatcherE.SetCatchType(7);
+            IEnumerable<SQLFollowListUnit> Temp =(IEnumerable <SQLFollowListUnit>)BlackCat.App.DataCatcherE.
+                Catch((int)BlackCat.App.DisplayActivity.ID);
+
+            foreach(SQLFollowListUnit e in Temp)
+            {
+                BlackCat.App.DataCatcherE.SetCatchType(2);
+
+                Followers.Add(new PersonMessage((SQLPersonUnit)BlackCat.App.DataCatcherE.Catch(e.FollowerID)));
+            }
+
+            int i = 0;
+            StackLayout[] Temp1 =  new StackLayout[10];
+            Temp1 = FollowerSLBuilder();
+            while (i < 10 && Temp1[i] != null)
+            {
+                ReturnObject.Children.Add(Temp1[i]);
+                i++;
+            }
             /*
              * 占位：添加FollowerID指代的用户（使用DataCatcher查找）的头像 & 绑定点击事件
              */
 
+
+
+            return ReturnObject;
+        }
+        private StackLayout[] FollowerSLBuilder()
+        {
+            StackLayout[] ReturnObject = new StackLayout[10];
+
+            
+
+            int i = 0;
+            if (Followers.Count == 0)
+            {
+                ReturnObject[0] = new StackLayout();
+                ReturnObject[0].Children.Add(new Label()
+                {
+                    Text = "现在还没有人加入",
+                    TextColor = SettingTheme.ColorLightGrayClear,
+                    HorizontalOptions = LayoutOptions.CenterAndExpand,
+                    HorizontalTextAlignment = TextAlignment.Center,
+                });
+            }
+            else
+            {
+                foreach (PersonMessage e in Followers)
+                {
+                    ReturnObject[i] = FollowerMessageBoardSLBuilder(e);
+                    i++;
+                }
+                if(i<10)
+                {
+                    for(;i<10;i++)
+                    {
+                        ReturnObject[i] = null;
+                    }
+                }
+            }
 
             return ReturnObject;
         }
@@ -616,7 +685,47 @@ namespace BlackCat
             }
             return ReturnObject;
         }
+        private StackLayout FollowerMessageBoardSLBuilder(PersonMessage D)
+        {
+            StackLayout ReturnObject = new StackLayout();
 
+            ReturnObject.Orientation = StackOrientation.Horizontal;
+
+            Image CreaterHead = D.HeadImage;
+            //CreaterHead.Source = FileImageSource.FromFile("Icons/Icon-CCat54.gif");
+            CreaterHead.WidthRequest = 54;
+            ReturnObject.Children.Add(CreaterHead);
+
+            StackLayout NameDisplaySL = new StackLayout();
+            NameDisplaySL.HorizontalOptions = LayoutOptions.StartAndExpand;
+            NameDisplaySL.Spacing = 0;
+
+            Label CreaterNameLB = new Label();
+            CreaterNameLB.Text = " " + D.Name;
+            CreaterNameLB.FontSize = Device.GetNamedSize(NamedSize.Medium, typeof(Label));
+            CreaterNameLB.TextColor = Color.Black;
+            CreaterNameLB.VerticalOptions = LayoutOptions.Center;
+            NameDisplaySL.Children.Add(CreaterNameLB);
+
+            Label CreaterRealNameLB = new Label();
+            CreaterRealNameLB.Text = " " + D.RealName;
+            CreaterRealNameLB.FontSize = Device.GetNamedSize(NamedSize.Micro, typeof(Label));
+            CreaterRealNameLB.TextColor = SettingTheme.ColorGrayClear;
+            CreaterRealNameLB.VerticalOptions = LayoutOptions.Center;
+            NameDisplaySL.Children.Add(CreaterRealNameLB);
+
+            ReturnObject.Children.Add(NameDisplaySL);
+
+            Label CreaterMarkLB = new Label();
+            CreaterMarkLB.Text = D.Mark.ToString();
+            CreaterMarkLB.FontSize = Device.GetNamedSize(NamedSize.Large, typeof(Label));
+            CreaterMarkLB.TextColor = SettingTheme.GetMainThemeColor();
+            ReturnObject.Children.Add(CreaterMarkLB);
+
+            
+
+            return ReturnObject;
+        }
         private Label CrossLineBuiler()
         {
             Label Line = new Label();
@@ -705,7 +814,7 @@ namespace BlackCat
 
                 Button BackButton = new Button();
                 FileImageSource BackImgS = new FileImageSource();
-                BackImgS = (FileImageSource)FileImageSource.FromFile("Icons/Back256.gif");
+                BackImgS = (FileImageSource)FileImageSource.FromFile(BlackCat.App.UriChanger.Uri("Icons/Back256.gif"));
                 BackButton.Image = BackImgS;
 
                 BackButton.HeightRequest = 50;
@@ -725,7 +834,7 @@ namespace BlackCat
              */
 
             Button MoreButton = new Button();
-            MoreButton.Image = ((FileImageSource)ImageSource.FromFile("Icons/More54.gif"));
+            MoreButton.Image = ((FileImageSource)ImageSource.FromFile(BlackCat.App.UriChanger.Uri("Icons/More54.gif")));
 
             MoreButton.Margin = new Thickness();
 
@@ -999,7 +1108,7 @@ namespace BlackCat
 
             Image PicShow = new Image()
             {
-                Source = ImageSource.FromFile("Icons/NewMessage160.gif"),
+                Source = ImageSource.FromFile(BlackCat.App.UriChanger.Uri("Icons/NewMessage160.gif")),
                 Aspect = Aspect.AspectFill,
                 HeightRequest = 42,
                 WidthRequest = 42,
@@ -1012,7 +1121,7 @@ namespace BlackCat
 
             Label MessageLB = new Label()
             {
-                Text = "已发布活动：",
+                Text = "已参与活动：",
                 TextColor = SettingTheme.ColorGrayClear,
                 FontSize = Device.GetNamedSize(NamedSize.Micro, typeof(Label))
             };
@@ -1158,7 +1267,7 @@ namespace BlackCat
             ComplementSL.Orientation = StackOrientation.Horizontal;
 
             Image ComplementIM = new Image();
-            ComplementIM.Source = ImageSource.FromFile("Icons/ComplementB256.gif");
+            ComplementIM.Source = ImageSource.FromFile(BlackCat.App.UriChanger.Uri("Icons/ComplementB256.gif"));
             ComplementIM.Aspect = Aspect.AspectFill;
             ComplementIM.HeightRequest = 36;
             ComplementIM.WidthRequest = 36;
@@ -1186,7 +1295,7 @@ namespace BlackCat
             ComplainSL.Orientation = StackOrientation.Horizontal;
 
             Image ComplainIM = new Image();
-            ComplainIM.Source = ImageSource.FromFile("Icons/ComplainB256.gif");
+            ComplainIM.Source = ImageSource.FromFile(BlackCat.App.UriChanger.Uri("Icons/ComplainB256.gif"));
             ComplainIM.Aspect = Aspect.AspectFill;
             ComplainIM.HeightRequest = 36;
             ComplainIM.WidthRequest = 36;
@@ -1271,7 +1380,7 @@ namespace BlackCat
             ComplementSL.Orientation = StackOrientation.Horizontal;
             ComplementSL.Children.Add(new Image()
             {
-                Source = ImageSource.FromFile("/Icons/ComplementB256.gif"),
+                Source = ImageSource.FromFile(BlackCat.App.UriChanger.Uri("/Icons/ComplementB256.gif")),
                 WidthRequest = HeightRequest = 36,
                 Aspect = Aspect.AspectFill,
                 HorizontalOptions = LayoutOptions.FillAndExpand
@@ -1289,7 +1398,7 @@ namespace BlackCat
             ComplainSL.Orientation = StackOrientation.Horizontal;
             ComplainSL.Children.Add(new Image()
             {
-                Source = ImageSource.FromFile("/Icons/ComplainB256.gif"),
+                Source = ImageSource.FromFile(BlackCat.App.UriChanger.Uri("/Icons/ComplainB256.gif")),
                 WidthRequest = HeightRequest = 36,
                 Aspect = Aspect.AspectFill,
                 HorizontalOptions = LayoutOptions.FillAndExpand
@@ -1358,7 +1467,7 @@ namespace BlackCat
 
             Image PicAdd = new Image();
             PicAdd.BackgroundColor = Color.Transparent;
-            PicAdd.Source = FileImageSource.FromFile("Icons/ButtonAdd200.gif");
+            PicAdd.Source = FileImageSource.FromFile(BlackCat.App.UriChanger.Uri("Icons/ButtonAdd200.gif"));
             PicAdd.Aspect = Aspect.AspectFill;
             PicAdd.HeightRequest = 54;
             PicAdd.WidthRequest = 54;
@@ -1381,7 +1490,7 @@ namespace BlackCat
 
             Image PicAdd = new Image();
             PicAdd.BackgroundColor = Color.Transparent;
-            PicAdd.Source = FileImageSource.FromFile("Icons/ButtonRefrash200.gif");
+            PicAdd.Source = FileImageSource.FromFile(BlackCat.App.UriChanger.Uri("Icons/ButtonRefrash200.gif"));
             PicAdd.Aspect = Aspect.AspectFill;
             PicAdd.HeightRequest = 54;
             PicAdd.WidthRequest = 54;
@@ -1404,7 +1513,7 @@ namespace BlackCat
 
             Image PicAdd = new Image();
             PicAdd.BackgroundColor = Color.Transparent;
-            PicAdd.Source = FileImageSource.FromFile("Icons/ButtonSetting200.gif");
+            PicAdd.Source = FileImageSource.FromFile(BlackCat.App.UriChanger.Uri("Icons/ButtonSetting200.gif"));
             PicAdd.Aspect = Aspect.AspectFill;
             PicAdd.HeightRequest = 54;
             PicAdd.WidthRequest = 54;
@@ -1427,7 +1536,7 @@ namespace BlackCat
 
             Image PicAdd = new Image();
             PicAdd.BackgroundColor = Color.Transparent;
-            PicAdd.Source = FileImageSource.FromFile("Icons/ButtonFollow200.gif");
+            PicAdd.Source = FileImageSource.FromFile(BlackCat.App.UriChanger.Uri("Icons/ButtonFollow200.gif"));
             PicAdd.Aspect = Aspect.AspectFill;
             PicAdd.HeightRequest = 54;
             PicAdd.WidthRequest = 54;
@@ -1450,7 +1559,7 @@ namespace BlackCat
 
             Image PicAdd = new Image();
             PicAdd.BackgroundColor = Color.Transparent;
-            PicAdd.Source = FileImageSource.FromFile("Icons/ButtonSure200.gif");
+            PicAdd.Source = FileImageSource.FromFile(BlackCat.App.UriChanger.Uri("Icons/ButtonSure200.gif"));
             PicAdd.Aspect = Aspect.AspectFill;
             PicAdd.HeightRequest = 54;
             PicAdd.WidthRequest = 54;
@@ -1476,7 +1585,7 @@ namespace BlackCat
 
             PicAdd = new Image();
             PicAdd.BackgroundColor = Color.Transparent;
-            PicAdd.Source = FileImageSource.FromFile("Icons/ButtonNext200.gif");
+            PicAdd.Source = FileImageSource.FromFile(BlackCat.App.UriChanger.Uri("Icons/ButtonNext200.gif"));
             PicAdd.Aspect = Aspect.AspectFill;
             PicAdd.HeightRequest = 54;
             PicAdd.WidthRequest = 54;
@@ -1502,7 +1611,7 @@ namespace BlackCat
                                 int a = (SetupPage.IndexNow++);
                                 if (SetupPage.SetupPages[SetupPage.IndexNow + 1] == null && SetupPage.IndexNow < 3)
                                 {
-                                    this.PicAdd.Source = FileImageSource.FromFile("Icons/ButtonSure200.gif");
+                                    this.PicAdd.Source = FileImageSource.FromFile(BlackCat.App.UriChanger.Uri("Icons/ButtonSure200.gif"));
                                 }
                             }
                         
@@ -1540,7 +1649,7 @@ namespace BlackCat
                             New.Mark = 70;
                             New.HeadImage = new Image()
                             {
-                                Source = ImageSource.FromFile("Icons/DafultHeadImg.gif"),
+                                Source = ImageSource.FromFile(BlackCat.App.UriChanger.Uri("Icons/DafultHeadImg.gif")),
                             };
                             New.PraiseNumber = 0;
                             New.ComplainNumber = 0;
@@ -1572,6 +1681,8 @@ namespace BlackCat
                     break;
                 case 4:
                     BlackCat.App.DataCatcherE.FollowListTableC.Alter(BlackCat.App.LoginPerson, BlackCat.App.DisplayActivity);
+                    BlackCat.App.PageInfo.PopAsync();
+                    BlackCat.App.PageInfo.PushAsync(new ActionPage(ActionPage.ActionIDR));
                     break;
                 case 5:
                     if(AddActivityPage.Check()==1)
@@ -1707,7 +1818,7 @@ namespace BlackCat
             ReturnObject.Orientation = StackOrientation.Horizontal;
 
             Button BackButton = new Button();
-            BackButton.Image = (FileImageSource)ImageSource.FromFile("Icons/Back40.gif");
+            BackButton.Image = (FileImageSource)ImageSource.FromFile(BlackCat.App.UriChanger.Uri("Icons/Back40.gif"));
             BackButton.BorderWidth = 0;
             BackButton.BackgroundColor = Color.Transparent;
 
@@ -1730,7 +1841,7 @@ namespace BlackCat
 
 
             Button MoreButton = new Button();
-            MoreButton.Image = (FileImageSource)ImageSource.FromFile("Icons/More54.gif");
+            MoreButton.Image = (FileImageSource)ImageSource.FromFile(BlackCat.App.UriChanger.Uri("Icons/More54.gif"));
             MoreButton.BackgroundColor = Color.Transparent;
             MoreButton.BorderWidth = 0;
 
@@ -1750,7 +1861,7 @@ namespace BlackCat
         private StackLayout TitleSLBuilder()
         {
             StackLayout ReturnObject = new StackLayout();
-
+            ReturnObject.Padding = new Thickness(8, 0, 8, 0);
 
             StackLayout TitleSL = TitleSLbuilder("标题", "亮眼标题会让你的活动更加出众");
             TitleET = EntryBuilder("活动标题，简短有力");
@@ -1765,7 +1876,7 @@ namespace BlackCat
         private StackLayout MessageSLBuilder()
         {
             StackLayout ReturnObject = new StackLayout();
-
+            ReturnObject.Padding = new Thickness(8, 0, 8, 0);
 
 
             StackLayout TitleSL = TitleSLbuilder("描述", "详细介绍你的计划");
@@ -1781,7 +1892,7 @@ namespace BlackCat
         private StackLayout DateChooseSLBuilder()
         {
             StackLayout ReturnObject = new StackLayout();
-
+            ReturnObject.Padding = new Thickness(8, 0, 8, 0);
 
             StackLayout TitleSL = TitleSLbuilder("时间", "规划活动的集合时间");
             ReturnObject.Children.Add(TitleSL);
@@ -1817,7 +1928,7 @@ namespace BlackCat
         private StackLayout PlaceSLBuilder()
         {
             StackLayout ReturnObject = new StackLayout();
-
+            ReturnObject.Padding = new Thickness(8, 0, 8, 0);
             StackLayout TitleSL = TitleSLbuilder("地点", "规划活动的集合地点");
             ReturnObject.Children.Add(TitleSL);
 
@@ -1829,7 +1940,7 @@ namespace BlackCat
         private StackLayout PeoPleNumberSLBuilder()
         {
             StackLayout ReturnObject = new StackLayout();
-
+            ReturnObject.Padding = new Thickness(8, 0, 8, 0);
             StackLayout TitleSL = TitleSLbuilder("人数限制", "设置活动的最大参与人数");
             ReturnObject.Children.Add(TitleSL);
 
@@ -1845,7 +1956,7 @@ namespace BlackCat
         private StackLayout TagsChooseSLBuilder()
         {
             StackLayout ReturnObject = new StackLayout();
-
+            ReturnObject.Padding = new Thickness(8, 0, 8, 0);
             StackLayout TitleSL = TitleSLbuilder("标签", "让活动更容易被发现");
             ReturnObject.Children.Add(TitleSL);
 
@@ -2179,7 +2290,7 @@ namespace BlackCat
             LogoShowSL.BackgroundColor = Color.Transparent;
 
             Image LogoImg = new Image();
-            LogoImg.Source = ImageSource.FromFile("Icons/LogoA.png");
+            LogoImg.Source = ImageSource.FromFile(BlackCat.App.UriChanger.Uri("Icons/LogoA.png"));
             LogoImg.WidthRequest = 600;
 
             LogoShowSL.Children.Add(LogoImg);
@@ -2227,9 +2338,11 @@ namespace BlackCat
                 Setup();
             }
             );
-            LoginButton.GestureRecognizers.Add(tgr1);
-            SetupButton.GestureRecognizers.Add(tgr2);
+            //LoginButton.GestureRecognizers.Add(tgr1);
+            //SetupButton.GestureRecognizers.Add(tgr2);
 
+            LoginButton.Clicked += LoginButton_Clicked;
+            SetupButton.Clicked += SetupButton_Clicked;
             MessageShowLB.TextColor = Color.Red;
             
             ButtonSL.Children.Add(LoginButton);
@@ -2242,12 +2355,23 @@ namespace BlackCat
             MainBassSL.Children.Add(InputPanelSL);
 
             NavigationPage.SetHasNavigationBar(this, false);
-            this.BackgroundImage = "BackG-B.png";
+            this.BackgroundImage = BlackCat.App.UriChanger.Uri("BackGB.png");
             Content = MainBassSL;
             //this.BackgroundColor = BlackCat.App.SettingTheme.GetMainThemeColor();
             this.BackgroundColor = BlackCat.App.SettingTheme.ColorWhiteClear;
             
         }
+
+        private void SetupButton_Clicked(object sender, EventArgs e)
+        {
+            Setup();
+        }
+
+        private void LoginButton_Clicked(object sender, EventArgs e)
+        {
+            Login();
+        }
+
         public static PersonMessage LoginC(string PhoneNumber,string Password)
         {
             PersonMessage ReturnObject = null;
@@ -2284,7 +2408,15 @@ namespace BlackCat
         }
         public void Setup()
         {
-            BlackCat.App.PageInfo.PushAsync(new SetupPage(),true);
+            try
+            {
+                BlackCat.App.PageInfo.PushAsync(new SetupPage(), true);
+            }
+            catch(Exception e)
+            {
+                string a = e.Message;
+            }
+            //BlackCat.App.PageInfo = new NavigationPage(new SetupPage());
         }
     }
     public class SetupPage : ActionBasePage
@@ -2354,6 +2486,7 @@ namespace BlackCat
         {
             StackLayout ReturnObject = new StackLayout();
 
+            ReturnObject.Padding = new Thickness(8, 0, 8, 0);
             StackLayout PhoneSL = new StackLayout();
 
             StackLayout PhoneTitleSL = TitleSLbuilder("手机号码", "将作为登陆的唯一凭据");
@@ -2390,7 +2523,7 @@ namespace BlackCat
         private StackLayout MessagePage()
         {
             StackLayout ReturnObject = new StackLayout();
-
+            ReturnObject.Padding = new Thickness(8, 0, 8, 0);
             StackLayout NameSL = new StackLayout();
 
             StackLayout NameTitleSL = TitleSLbuilder("昵称", "用于个人ID显示");
@@ -2418,7 +2551,7 @@ namespace BlackCat
         private StackLayout MarkPage()
         {
             StackLayout ReturnObject = new StackLayout();
-
+            ReturnObject.Padding = new Thickness(8, 0, 8, 0);
             StackLayout MarkOranglePESL =new  StackLayout();
 
             StackLayout MarkOrangleTitleSL = TitleSLbuilder("实名认证单位","选择用于实名认证的单位");
@@ -2449,7 +2582,7 @@ namespace BlackCat
         private StackLayout MessageShowPage()
         {
             StackLayout ReturnObject = new StackLayout();
-
+            ReturnObject.Padding = new Thickness(8, 0, 8, 0);
             Label label1 = new Label();
             label1.Text = "注册成功！";
             label1.TextColor = SettingTheme.GetMainThemeColor();
@@ -2490,7 +2623,7 @@ namespace BlackCat
         {
             OldPassword = New.Password;
             StackLayout ReturnObject = new StackLayout();
-
+            ReturnObject.Padding = new Thickness(8, 0, 8, 0);
             StackLayout NameSL = new StackLayout();
 
             StackLayout NameTitleSL = TitleSLbuilder("昵称", "修改你的昵称");
@@ -2542,7 +2675,7 @@ namespace BlackCat
             ReturnObject.Orientation = StackOrientation.Horizontal;
 
             Button BackButton = new Button();
-            BackButton.Image = (FileImageSource)ImageSource.FromFile("Icons/Back40.gif");
+            BackButton.Image = (FileImageSource)ImageSource.FromFile(BlackCat.App.UriChanger.Uri("Icons/Back40.gif"));
             BackButton.BorderWidth = 0;
             BackButton.BackgroundColor = Color.Transparent;
 
@@ -2562,7 +2695,7 @@ namespace BlackCat
 
 
             Button MoreButton = new Button();
-            MoreButton.Image = (FileImageSource)ImageSource.FromFile("Icons/More54.gif");
+            MoreButton.Image = (FileImageSource)ImageSource.FromFile(BlackCat.App.UriChanger.Uri("Icons/More54.gif"));
             MoreButton.BackgroundColor = Color.Transparent;
             MoreButton.BorderWidth = 0;
 
@@ -2651,7 +2784,7 @@ namespace BlackCat
     {
         int CatcherID;
 
-        string[] DefaultCatchType = { "Activity", "Person", "Tag", "Guestbook", "NewestActivityID", "Message" };
+        string[] DefaultCatchType = { "Activity", "Person", "Tag", "Guestbook", "NewestActivityID", "Message","FollowList" };
         public int CatchType;
         bool Available;
 
@@ -2711,20 +2844,23 @@ namespace BlackCat
             
              switch(CatchType)
                     {
-                        case 2:
-                            SQLPersonUnit ReturnObjectP = PersonTableC.GetUnit(CatchKey);
-                            return ReturnObjectP;
-                        case 1:
-                            SQLActivityUnit ReturnObjectA = ActivityTableC.GetUnit(CatchKey);
-                            return ReturnObjectA;
-                        case 3:
-                            return GetTag(CatchKey);
-                        case 4:
-                            return GuestbookTableC.SQLConnection.Query<SQLGuestbookUnit>("SELECT * FROM SQLGuestbookUnit WHERE FollowActivityID ="+ CatchKey);
-                        case 5:
-                            return ActivityTableC.GetUnit(ActivityTableC.SQLConnection.GetTableInfo("SQLActivityUnit").Count).ID;
-                        case 6:
-                            return SreachMessage(CatchKey);
+                case 2:
+                    SQLPersonUnit ReturnObjectP = PersonTableC.GetUnit(CatchKey);
+                    return ReturnObjectP;
+                case 1:
+                    SQLActivityUnit ReturnObjectA = ActivityTableC.GetUnit(CatchKey);
+                    return ReturnObjectA;
+                case 3:
+                    return GetTag(CatchKey);
+                case 4:
+                    return GuestbookTableC.SQLConnection.Query<SQLGuestbookUnit>("SELECT * FROM SQLGuestbookUnit WHERE FollowActivityID ="+ CatchKey);
+                case 5:
+                    return ActivityTableC.GetUnit(ActivityTableC.SQLConnection.GetTableInfo("SQLActivityUnit").Count).ID;
+                case 6:
+                    return SreachMessage(CatchKey);
+                case 7:
+                    return SreachFollower(CatchKey);
+                    
                     }
             
             /*
@@ -2750,6 +2886,12 @@ namespace BlackCat
             this.CatchType = CatchType;
             return 1;
         }
+        private IEnumerable<SQLFollowListUnit> SreachFollower(int ActivityID)
+        {
+            return FollowListTableC.SQLConnection.
+                Query<SQLFollowListUnit>("SELECT * FROM SQLFollowListUnit WHERE ActivityID =" + ActivityID).
+                AsEnumerable<SQLFollowListUnit>();
+        }
         private IEnumerable<SQLActivityUnit> SreachMessage(int PersonID)
         {
             SQLiteCommand Command = FollowListTableC.SQLConnection.CreateCommand("SELECT * FROM SQLFollowListUnit WHERE FollowerID =" + PersonID);
@@ -2767,6 +2909,27 @@ namespace BlackCat
 
             return ReturnObject;
         }
+        /*
+        private IEnumerable<SQLGuestbookUnit> SreachGuestbook(int PersonID)
+        {
+            
+            IEnumerable<SQLGuestbookUnit> ReturnObject;
+
+            SQLiteCommand Command = FollowListTableC.SQLConnection.CreateCommand("SELECT * FROM SQLGuestbookUnit WHERE FollowerID =" + PersonID);
+
+            ReturnObject = GuestbookTableC.SQLConnection.Query<SQLGuestbookUnit>(Command.CommandText);
+
+            List<SQLActivityUnit> ReturnObjectList = ReturnObject.ToList<SQLActivityUnit>();
+            foreach (SQLFollowListUnit e in Temp)
+            {
+                ReturnObjectList.Add(ActivityTableC.GetUnit(e.ActivityID));
+            }
+            ReturnObject = ReturnObjectList.AsEnumerable();
+
+            return ReturnObject;
+            
+    }
+    */
         private string GetTag(int Key)
         {
             switch(Key)
@@ -2828,6 +2991,13 @@ namespace BlackCat
     {
         SQLite.Net.SQLiteConnection GetConnection();
         
+    }
+    public class PicUriChanger
+    {
+        public string Uri(string UWPUri)
+        {
+            return Device.OnPlatform(UWPUri.ToLower(), UWPUri.ToLower(), UWPUri);
+        }
     }
     //2.1.数据库操纵类
     public class SQLBaseControl
@@ -3155,14 +3325,14 @@ namespace BlackCat
             {
                 this.HeadImage = new Image()
                 {
-                    Source = ImageSource.FromFile("Icons/Icon-CCat853.gif")
+                    Source = ImageSource.FromFile(BlackCat.App.UriChanger.Uri("Icons/Icon-CCat853.gif"))
                 };
             }
             else
             {
                 this.HeadImage = new Image()
                 {
-                    Source = ImageSource.FromFile("Icons/DafultHeadImg.gif")
+                    Source = ImageSource.FromFile(BlackCat.App.UriChanger.Uri("Icons/DafultHeadImg.gif"))
                 };
             }
 
@@ -3185,7 +3355,7 @@ namespace BlackCat
 
                 this.HeadImage = new Image
                 {
-                    Source = ImageSource.FromFile("Icons/Icon-CCat853.gif")
+                    Source = ImageSource.FromFile(BlackCat.App.UriChanger.Uri("Icons/Icon-CCat853.gif"))
                 };
 
                 this.Password = "123456";
@@ -3197,7 +3367,7 @@ namespace BlackCat
             this.PhoneNumber = PhoneNumber;
             this.HeadImage = new Image()
             {
-                Source = ImageSource.FromFile("Icons/DafultHeadImg.gif")
+                Source = ImageSource.FromFile(BlackCat.App.UriChanger.Uri("Icons/DafultHeadImg.gif"))
             };
             /*
              * 占位：其他设置过程

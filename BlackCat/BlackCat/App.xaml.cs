@@ -5,9 +5,11 @@ using System.Text;
 using System.IO;
 
 using Xamarin.Forms;
+using Xamarin.Forms.Xaml;
 
 namespace BlackCat
 {
+    [XamlCompilation(XamlCompilationOptions.Compile)]
     public partial class App : Application
     {
         public static NavigationPage PageInfo;
@@ -19,11 +21,13 @@ namespace BlackCat
         public static ActivityMessage DemoActivity;
         public static ActivityMessage DisplayActivity;
         public static Theme SettingTheme;
+        public static PicUriChanger UriChanger;
         //string DatabasePath;
         //SQLite.Net.Interop.ISQLitePlatform SQLitePlatform;
 
         public App()
         {
+            UriChanger = new PicUriChanger();
             SettingTheme = new Theme();
             DataCatcherE = new DataCatcher();
             //LoginPerson = new PersonMessage(-1);
