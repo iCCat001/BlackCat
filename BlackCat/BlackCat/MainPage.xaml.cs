@@ -14,10 +14,8 @@ namespace BlackCat
 {
     //1. UI以及表层控制类
     //1.1. 总入口类
-    [XamlCompilation(XamlCompilationOptions.Compile)]
     public partial class MainPage : ContentPage
     {
-        [assembly: XamlCompilation(XamlCompilationOptions.Compile)]
         StackLayout MainPageBaseSL;
         StackLayout ActionListSL;
         StackLayout PersonMessageSL;
@@ -25,17 +23,14 @@ namespace BlackCat
         ScrollView MainPageBaseSV;
         ScrollView ActionListSV;
 
-        StackLayout[] ActionUnits;
+        public AbsoluteLayout MainBaseAL;
+        public StackLayout MainBaseSL;
+        public StackLayout SuperBottonBV;
 
         int NowIndex = 1;
         static public int SelectIndex = 1;
 
         static public SuperBotton SuperButtonM;
-
-
-        /*
-         * 占位 ：其他公共组件声明
-         */
 
         Theme DefaultTheme = BlackCat.App.SettingTheme;
 
@@ -53,42 +48,24 @@ namespace BlackCat
             MainPageBaseSV = new ScrollView();
             ActionListSV = new ScrollView();
 
-            ActionUnits = new StackLayout[20];
             MainPageBaseSL = new StackLayout();
 
             SuperButtonM = new SuperBotton(1, 1);
 
-            /*
-             * 占位 ：其他公共组件定义
-             */
 
-
-
-            //PersonMessageSL = MainPersonMessageSLBuilder(1, 0);
             PersonMessageSL = new PersonMessageBoard(1, 1);
-            //ActionListSL = MainActionListSLBuilder(1, 0);
-            //ActionListSL.Spacing = 0;
+
             ActionListSL = new ActionList(-1, -1);
-
-
-            MainPageBaseSV.Content = MainPageBaseSL;
-
 
             MainPageBaseSL.Spacing = 0;
 
             MainPageBaseSV.Content = MainPageBaseSL;
 
-            
             ActionListSV.Content = ActionListSL;
             MainPageBaseSL.BackgroundColor = DefaultTheme.ColorLightGrayClear;
 
             MainPageBaseSL.Children.Add(PersonMessageSL);
             MainPageBaseSL.Children.Add(ActionListSV);
-
-            //MainPageBaseSL.Children.Add();
-            TableView TVTest = new TableView();
-            //TVTest.Root.Add()
-            //Content = MainPageBaseSV;
 
 
             MainBaseSlBuilder();
@@ -119,17 +96,6 @@ namespace BlackCat
                 NowIndex = SelectIndex;
             }
         }
-
-        public MainPage(int Key = 0)
-        {
-            Content = ActionListSV;
-        }
-
-        /*test*/
-        public AbsoluteLayout MainBaseAL;
-        public StackLayout MainBaseSL;
-        public StackLayout SuperBottonBV;
-
         private void MainBaseSlBuilder()
         {
             AbsoluteLayout.SetLayoutBounds(MainBaseSL, new Rectangle(0, 0, 1, 1));
@@ -147,110 +113,6 @@ namespace BlackCat
             IsVisible = true;
 
         }
-        /*test*/
-
-        private StackLayout MainPersonMessageSLBuilder(int ID, int key = 0)
-        {
-            StackLayout NewBoard = new StackLayout();
-
-            StackLayout ControlBarSL = new StackLayout();
-            StackLayout ListTitleSL = new StackLayout();
-            Image HeadImgIM = new Image();
-
-            Label UserNameLB = new Label();
-            Label UserRealNameLB = new Label();
-            Label UserDescripeLB = new Label();
-            Label UserIntegrityMarkLB = new Label();
-
-            NewBoard.BackgroundColor = DefaultTheme.GetMainThemeColor();
-            NewBoard.Spacing = 5;
-
-            /*
-             * ControlBarSL = ControlBarSLBuilder(ID);
-             * 占位 ：构建控制条 并绑定事件
-             */
-
-
-            HeadImgIM.Source = ImageSource.FromResource("BlackCat.Images.Icon-CCat853.gif");
-            HeadImgIM.HorizontalOptions = LayoutOptions.Center;
-            HeadImgIM.HeightRequest = 170;
-            HeadImgIM.WidthRequest = 170;
-
-
-            /*
-             * UserNameLB.Text = PersonMessage.Name;
-             * UserNameLB.FontSize = Device.GetNamedSize(NamedSize.Medium, typeof(Label));
-             * 占位 ：姓名
-             */
-            //----Temp----
-            UserNameLB.Text = "C-Cat";
-            UserNameLB.FontSize = Device.GetNamedSize(NamedSize.Medium, typeof(Label));
-            UserNameLB.TextColor = DefaultTheme.ColorWhiteClear;
-            UserNameLB.HorizontalOptions = LayoutOptions.Center;
-            //-----------
-
-            /*
-             * UserRealNameLB.Text = PersonMessage.RealName;
-             * UserRealNameLB.FontSize = Device.GetNamedSize(NamedSize.Micro, typeof(Label));
-             * 占位 ：真实姓名
-             */
-            //----Temp----
-            UserRealNameLB.Text = "信息学院软件工程一班 王凯";
-            UserRealNameLB.FontSize = Device.GetNamedSize(NamedSize.Micro, typeof(Label));
-            UserRealNameLB.TextColor = DefaultTheme.ColorWhiteClear;
-            UserRealNameLB.HorizontalOptions = LayoutOptions.Center;
-            //-----------
-
-            /*
-             * UserDescripeLB.Text = PersonMessage.Descripe;
-             * UserDescripeLB.FontSize = Device.GetNamedSize(NamedSize.Medium, typeof(Label));
-             * 占位 ：签名
-             */
-            //----Temp----
-            UserDescripeLB.Text = "没什么方向感但对一切充满好奇的程序员";
-            UserDescripeLB.FontSize = Device.GetNamedSize(NamedSize.Medium, typeof(Label));
-            UserDescripeLB.TextColor = DefaultTheme.ColorWhiteClear;
-            UserDescripeLB.HorizontalOptions = LayoutOptions.Center;
-            //-----------
-
-            /*
-             * UserIntegrityMarkLB.Text = PersonMessage.Mark;
-             * UserIntegrityMarkLB.FontSize = Device.GetNamedSize(NamedSize.Medium, typeof(Label));
-             * 占位 ：信用分数
-             */
-            //----Temp----
-            UserIntegrityMarkLB.Text = "信用评分：94";
-            UserIntegrityMarkLB.FontSize = Device.GetNamedSize(NamedSize.Small, typeof(Label));
-            UserIntegrityMarkLB.TextColor = DefaultTheme.ColorWhiteClear;
-            UserIntegrityMarkLB.HorizontalOptions = LayoutOptions.Center;
-            //-----------
-
-            /*
-             * ListTitleSL = ListTitleSLBuilder(ID);
-             * 占位 ：构建标题枢纽 并绑定事件
-             */
-
-            NewBoard.Children.Add(ControlBarSL);
-            NewBoard.Children.Add(HeadImgIM);
-            NewBoard.Children.Add(UserNameLB);
-            NewBoard.Children.Add(UserRealNameLB);
-            NewBoard.Children.Add(UserDescripeLB);
-            NewBoard.Children.Add(UserIntegrityMarkLB);
-            NewBoard.Children.Add(ListTitleSL);
-
-
-
-            return NewBoard;
-        }
-        private StackLayout MainActionListSLBuilder(int ID, int key = 0)
-        {
-            StackLayout NewBoard = new StackLayout();
-
-
-
-            return NewBoard;
-        }
-
 
     }
     //1.2. 其他类
@@ -755,7 +617,7 @@ namespace BlackCat
         Label PersonMessageDescribeLB;
         Label PersonMessageMarkLB;
 
-
+        int tempCount = 0;
 
         PersonMessage DisplayPersonMessage;
         public PersonMessageBoard()
@@ -781,9 +643,9 @@ namespace BlackCat
             PersonMessageBulider(AimPersonMessageID, Key);
 
             MainControlBarSL = MainControlBuilder(LoginPersonMessageID, AimPersonMessageID);
-            PersonMessageBigHeadImgIM = PersonMessageBigHeadImgBVBuilder(AimPersonMessageID);
+            PersonMessageBigHeadImgIM = PersonMessageBigHeadImgBVBuilder();
 
-            PersonMessageLBBulier(AimPersonMessageID);
+            PersonMessageLBBulier();
 
 
 
@@ -865,11 +727,23 @@ namespace BlackCat
             DBTest.SQLConnection.DeleteAll<SQLPersonUnit>();
             IEnumerable<SQLPersonUnit> b = DBTest.SQLConnection.Query<SQLPersonUnit>(Command.CommandText);
             */
+            tempCount++;
 
-            BlackCat.App.TempSee();
-            BlackCat.App.TempClear();
+            ContentPage AboutPage = new ContentPage();
+            NavigationPage.SetHasNavigationBar(AboutPage, false);
+            AboutPage.BackgroundImage = BlackCat.App.UriChanger.Uri("AboutP.png");
+
+            BlackCat.App.PageInfo.PushAsync(AboutPage);
+
+            if(tempCount ==3)
+            {
+                BlackCat.App.TempSee();
+                BlackCat.App.TempClear();
+                tempCount = 0;
+            }
+            
         }
-        private Image PersonMessageBigHeadImgBVBuilder(int AimPersonMessageID)
+        private Image PersonMessageBigHeadImgBVBuilder()
         {
             Image ReturnObject = new Image();
             if (DisplayPersonMessage.HeadImage != null)
@@ -883,7 +757,7 @@ namespace BlackCat
 
             return ReturnObject;
         }
-        private int PersonMessageLBBulier(int AimPersonMessageID)
+        private int PersonMessageLBBulier()
         {
             PersonMessageNameLB.Text = DisplayPersonMessage.Name;
             PersonMessageNameLB.FontSize = Device.GetNamedSize(NamedSize.Medium, typeof(Label));
@@ -1712,7 +1586,9 @@ namespace BlackCat
                                     New.TagsCount++;
                                 }
 
-                        New.PlanDate = AddActivityPage.ChooseDate;
+                        New.PlanDate = new DateTime(AddActivityPage.DP.Date.Year, AddActivityPage.DP.Date.Month,
+                            AddActivityPage.DP.Date.Day,AddActivityPage.TP.Time.Hours, AddActivityPage.TP.Time.Minutes, AddActivityPage.TP.Time.Seconds);
+                        
                         New.StartPlace = AddActivityPage.PlaceET.Text;
 
                         New.PeopleNumber = 0;
@@ -1896,15 +1772,25 @@ namespace BlackCat
 
             StackLayout TitleSL = TitleSLbuilder("时间", "规划活动的集合时间");
             ReturnObject.Children.Add(TitleSL);
+            /*
             Button TimePickBT = new Button()
             {
                 Text = "选择开始日期和时间",
                 TextColor = SettingTheme.GetMainThemeColor()
             };
             TimePickBT.Clicked += DatePickBT_Clicked;
+            */
+            DP = new DatePicker
+            {
+                VerticalOptions = LayoutOptions.CenterAndExpand
+            };
 
-            
-            ReturnObject.Children.Add(TimePickBT);
+            TP = new TimePicker
+            {
+                VerticalOptions = LayoutOptions.CenterAndExpand
+            };
+            ReturnObject.Children.Add(DP);
+            ReturnObject.Children.Add(TP);
 
             return ReturnObject;
         }
@@ -1917,7 +1803,15 @@ namespace BlackCat
             DatePicker PA = new DatePicker();
             
             */
+
+            
             var TTT = new TimePicker();
+
+            TTT.IsEnabled = true;
+            TTT.VerticalOptions = LayoutOptions.CenterAndExpand;
+            TTT.HorizontalOptions = LayoutOptions.CenterAndExpand;
+            
+            
 
             DateTime DateTimeA = (DP).Date;
             TimeSpan DateTimeB = (TP).Time;
@@ -2408,6 +2302,7 @@ namespace BlackCat
         }
         public void Setup()
         {
+            
             try
             {
                 BlackCat.App.PageInfo.PushAsync(new SetupPage(), true);
@@ -2421,6 +2316,7 @@ namespace BlackCat
     }
     public class SetupPage : ActionBasePage
     {
+        
         public static StackLayout[] SetupPages = new StackLayout[5];
         public static Label PageTitle = new Label();
         public static int IndexNow = 0;
@@ -2479,6 +2375,7 @@ namespace BlackCat
             SetupPages[0] = EditPage(Input);
 
             PageTitle.Text = "修改资料";
+            MainBaseSL.Children.Add(ControlBaseSLBulider(4));
             MainBaseSL.Children.Add(SetupPages[0]);
             Content = MainBaseAL;
         }
@@ -2876,7 +2773,7 @@ namespace BlackCat
             int ReturnID = -1;
 
             /*
-             * 占位：本地分配捕捉器ID
+             * 占位：本地分配捕捉器ID（已弃用该功能）
              */
 
             return ReturnID;
@@ -2909,6 +2806,7 @@ namespace BlackCat
 
             return ReturnObject;
         }
+
         /*
         private IEnumerable<SQLGuestbookUnit> SreachGuestbook(int PersonID)
         {
@@ -2990,7 +2888,6 @@ namespace BlackCat
     public interface ISQLite
     {
         SQLite.Net.SQLiteConnection GetConnection();
-        
     }
     public class PicUriChanger
     {
@@ -3300,6 +3197,8 @@ namespace BlackCat
 
             if (Key == -1)
                 this.Setup("", "", "", -1);
+            if (Key == -2)
+                this.Setup("", "", "", -2);
 
         }
         public PersonMessage(SQLPersonUnit SourceData)
@@ -3317,8 +3216,8 @@ namespace BlackCat
             this.MarkNumber = SourceData.MarkNumber;
             this.MarkOrganize = SourceData.MarkOrganize;
             this.Password = SourceData.Password;
-            //this.SetupDate = new DateTime();
-            //this.LoginDate = new DateTime();
+            this.SetupDate = DateTime.Parse(SourceData.SetupDateSourceData);
+            this.LoginDate = DateTime.Parse(SourceData.LoginDateSourceData);
 
 
             if (this.Name == "C-Cat")
@@ -3326,6 +3225,13 @@ namespace BlackCat
                 this.HeadImage = new Image()
                 {
                     Source = ImageSource.FromFile(BlackCat.App.UriChanger.Uri("Icons/Icon-CCat853.gif"))
+                };
+            }
+            else if (this.Name == "SunnyBoy")
+            {
+                this.HeadImage = new Image()
+                {
+                    Source = ImageSource.FromFile(BlackCat.App.UriChanger.Uri("Icons/PP853.png"))
                 };
             }
             else
@@ -3362,6 +3268,27 @@ namespace BlackCat
                 ID = IDRequest(0);
                 return 1;
             }
+            if (Key == -2)
+            {
+                this.Name = "SunnyBoy";
+                this.Describe = "正面、阳光、积极的我~";
+                this.PhoneNumber = "11111111111";
+                this.TakeMark("", "", "", -2);
+
+                this.ComplainNumber = 0;
+                this.PraiseNumber = 16;
+
+                this.Available = true;
+
+                this.HeadImage = new Image
+                {
+                    Source = ImageSource.FromFile(BlackCat.App.UriChanger.Uri("Icons/PP853.png"))
+                };
+
+                this.Password = "123456";
+                ID = IDRequest(0);
+                return 1;
+            }
             this.Name = Name;
             this.Describe = Describe;
             this.PhoneNumber = PhoneNumber;
@@ -3392,7 +3319,16 @@ namespace BlackCat
                 this.Mark = 94;
                 return 1;
             }
+            if (key == -2)
+            {
+                this.MarkNumber = "1546128";
+                this.MarkNumber = "湖南人文科技学院";
+                this.RealName = "信息学院软件工程一班 彭华伟";
+                this.Marked = true;
 
+                this.Mark = 81;
+                return 1;
+            }
             this.MarkNumber = MarkNumber;
             this.MarkOrganize = MarkOrganize;
             this.RealName = RealName;
@@ -3513,6 +3449,23 @@ namespace BlackCat
                 AddTag(1);
 
             }
+            if (Key == -2)
+            {
+                this.Title = "去英语角玩吧！";
+                this.Describe = "今天真是阳光明媚啊！离开寝室，离开教室，我们去走走吧！" + Environment.NewLine +
+                                "我们可以英语角玩会，聊聊学习，聊聊趣事，这总比无所事事好吧。虽然你我并不相识，但是我们从现在开始成为朋友，不是吗？" + Environment.NewLine +
+                                "今天下午4：00，我在英语角等你们，不见不散！";
+                this.Place = "英语角";
+                this.StartPlace = "英语角";
+                this.PeopleNumberLimit = 10;
+                this.Creater = Creater;
+                this.PlanDate = new DateTime(2017, 7, 18, 14, 0, 0);
+                this.FollowerCount = 0;
+
+                HasMessage = true;
+                AddTag(1);
+
+            }
         }
         public ActivityMessage(SQLActivityUnit SourceData)
         {
@@ -3523,7 +3476,8 @@ namespace BlackCat
             this.StartPlace = SourceData.StartPlace;
             this.PeopleNumber = SourceData.PeopleNumber;
             this.PeopleNumberLimit = SourceData.PeopleNumberLimit;
-            
+
+            this.PlanDate = DateTime.Parse(SourceData.PlanDate);
             if (SourceData.Tag1 != "")
             {
                 this.Tags[0] = SourceData.Tag1;
@@ -3567,7 +3521,7 @@ namespace BlackCat
         }
         public int AddFollower(PersonMessage NewFollower)
         {
-            if (Follower.Length > PeopleNumberLimit)
+            if (PeopleNumber > PeopleNumberLimit)
                 return -1; //人数超限
             Follower[FollowerCount] = NewFollower;
             FollowerCount++;

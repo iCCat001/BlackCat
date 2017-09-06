@@ -24,11 +24,17 @@ namespace BlackCat.Droid
             ToolbarResource = Resource.Layout.Toolbar;
 
             base.OnCreate(bundle);
+            AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
 
             global::Xamarin.Forms.Forms.Init(this, bundle);
             LoadApplication(new App());
         }
-        
+
+        private void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
+        {
+            Exception ef =(Exception) e.ExceptionObject;
+            string m = ef.Message;
+        }
     }
     public class SQLite_Android : ISQLite
     {

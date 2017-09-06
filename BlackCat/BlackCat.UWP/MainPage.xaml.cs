@@ -6,6 +6,7 @@ using System.Runtime.InteropServices.WindowsRuntime;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.Storage;
+using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
@@ -17,6 +18,7 @@ using SQLite.Net;
 using SQLite.Net.Interop;
 using Xamarin.Forms;
 using BlackCat.UWP;
+using Windows.Foundation.Metadata;
 //using SQLite.Net;
 
 [assembly: Dependency(typeof(SQLite_UWP))]
@@ -31,7 +33,6 @@ namespace BlackCat.UWP
         {
             this.InitializeComponent();
 
-            
 
             var A = new SQLite.Net.Platform.WinRT.SQLitePlatformWinRT();
 

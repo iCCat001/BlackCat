@@ -14,6 +14,9 @@ using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
+using Microsoft.HockeyApp;
+using Windows.UI.ViewManagement;
+using Windows.Foundation.Metadata;
 
 namespace BlackCat.UWP
 {
@@ -30,6 +33,7 @@ namespace BlackCat.UWP
         {
             this.InitializeComponent();
             this.Suspending += OnSuspending;
+            Microsoft.HockeyApp.HockeyClient.Current.Configure("d05ade36-7a32-4f04-b315-35d6997257c1");
         }
 
         /// <summary>
@@ -46,6 +50,7 @@ namespace BlackCat.UWP
                 this.DebugSettings.EnableFrameRateCounter = true;
             }
 #endif
+
 
             Frame rootFrame = Window.Current.Content as Frame;
 
@@ -68,6 +73,8 @@ namespace BlackCat.UWP
                 // Place the frame in the current Window
                 Window.Current.Content = rootFrame;
             }
+
+            //var isStatusBarPresent = ApiInformation.IsTypePresent(typeof(StatusBar).ToString());
 
             if (rootFrame.Content == null)
             {
