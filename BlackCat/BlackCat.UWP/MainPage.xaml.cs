@@ -33,7 +33,6 @@ namespace BlackCat.UWP
         {
             this.InitializeComponent();
 
-
             var A = new SQLite.Net.Platform.WinRT.SQLitePlatformWinRT();
 
             LoadApplication(new BlackCat.App());
@@ -43,7 +42,6 @@ namespace BlackCat.UWP
     {
         public SQLite_UWP()
         {
-            
         }
 
         #region ISQLite implementation
